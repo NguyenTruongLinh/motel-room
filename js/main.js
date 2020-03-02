@@ -5,7 +5,7 @@ let app = new Vue({
     el: '#app',
     data() {
         return {
-            step: 2,
+            step: 1,
             form: {
                 roomRental: '',
                 electric: '',
@@ -18,13 +18,7 @@ let app = new Vue({
             submitStatus: null
         }
     },
-    watch: {
-        // submitStatus() {
-        //     if (this.submitStatus === 'OK') {
-        //         this.step++;
-        //     }
-        // }
-    },
+    watch: {},
     validations() {
         if (!this.checkOrther) {
             return {
