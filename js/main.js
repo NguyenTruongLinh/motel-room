@@ -7,7 +7,7 @@ let app = new Vue({
         return {
             step: 1,
             form: {
-                roomRental: '',
+                roomRental: 9500000,
                 electric: '',
                 water: '',
                 orther: '',
@@ -15,17 +15,70 @@ let app = new Vue({
             },
             total: 0,
             checkOrther: false,
-            submitStatus: null
+            submitStatus: null,
+            persons: [{
+                    id: 1,
+                    name: 'Bảo',
+                    money: 0,
+                    model: '',
+                    newMoney: 0
+                },
+                {
+                    id: 2,
+                    name: 'Chi',
+                    money: 0,
+                    model: '',
+                    newMoney: 0
+                },
+                {
+                    id: 3,
+                    name: 'Hiếu',
+                    money: 0,
+                    model: '',
+                    newMoney: 0
+                },
+                {
+                    id: 4,
+                    name: 'Linh',
+                    money: 0,
+                    model: '',
+                    newMoney: 0
+                },
+                {
+                    id: 5,
+                    name: 'Nguyện',
+                    money: 0,
+                    model: '',
+                    newMoney: 0
+                },
+                {
+                    id: 6,
+                    name: 'Sinh',
+                    money: 0,
+                    model: '',
+                    newMoney: 0
+                },
+                {
+                    id: 7,
+                    name: 'Tú',
+                    money: 0,
+                    model: '',
+                    newMoney: 0
+                }
+            ]
         }
     },
-    watch: {},
+    watch: {
+        total() {
+            this.persons.forEach(e => {
+                e.money = Math.round((this.totalMoney / 7) * 100) / 100;
+            })
+        },
+    },
     validations() {
         if (!this.checkOrther) {
             return {
                 form: {
-                    roomRental: {
-                        required,
-                    },
                     electric: {
                         required,
                     },
@@ -37,9 +90,6 @@ let app = new Vue({
         } else {
             return {
                 form: {
-                    roomRental: {
-                        required,
-                    },
                     electric: {
                         required,
                     },
@@ -96,6 +146,9 @@ let app = new Vue({
                 this.step++;
             }
         },
+        updateMoney(e, item) {
+            item.newMoney = parseFloat(e.target.value) + parseFloat(item.money)
+        },
     },
     filters: {
         toCurrency(value) {
@@ -108,6 +161,6 @@ let app = new Vue({
                 minimumFractionDigits: 0
             });
             return formatter.format(value);
-        }
+        },
     },
 });

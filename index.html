@@ -28,28 +28,23 @@
 </head>
 
 <body>
-    <div id="app" class="flex items-center justify-center w-full h-screen">
+    <div id="app" class="flex items-center justify-center w-full" :class="step === 1 ? 'h-screen' : ''">
         <div class="w-full max-w-xs mx-auto">
-            <form class="bg-white shadow-md rounded border px-8 pt-6 pb-8 mb-4">
+            <div class="bg-white shadow-md rounded border px-8 pt-6 pb-8 mb-4">
                 <h3 class="text-gray-700 text-xl font-bold mb-5">Tính tiền nhà 28/6D</h3>
                 <div v-if="step === 1">
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                            Tiền nhà
-                        </label>
-                        <input v-model.number="$v.form.roomRental.$model" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{ 'error': $v.form.roomRental.$error }" id="roomRental" type="number">
-                    </div>
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="electricity">
                             Tiền điện
                         </label>
-                        <input v-model.number="$v.form.electric.$model" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{ 'error': $v.form.electric.$error }" id="electricity" type="number">
+                        <input v-model.number="$v.form.electric.$model" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{ 'error': $v.form.electric.$error }" id="electricity" type="number"
+                            min="0">
                     </div>
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="water-money">
                             Tiền nước
                         </label>
-                        <input v-model.number="$v.form.water.$model" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{ 'error': $v.form.water.$error }" id="water-money" type="number">
+                        <input v-model.number="$v.form.water.$model" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{ 'error': $v.form.water.$error }" id="water-money" type="number" min="0">
                     </div>
                     <label class="inline-flex items-center text-gray-700 text-sm font-bold mb-2">
                         <input type="checkbox" class="form-checkbox" name="checkbox" value="1"
@@ -61,7 +56,8 @@
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="orther-money">
                                 Tiền khác
                             </label>
-                            <input v-model.number="$v.form.orther.$model" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{ 'error': $v.form.orther.$error }" id="orther-money" type="number">
+                            <input v-model.number="$v.form.orther.$model" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{ 'error': $v.form.orther.$error }" id="orther-money" type="number"
+                                min="0">
                         </div>
                         <div class="mb-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="orther-note">
@@ -71,10 +67,10 @@
                         </div>
                     </div>
                     <div class="flex items-center justify-between">
-                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" @click="submit">
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" @click="submit">
                             Tiếp theo
                         </button>
-                        <button class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 focus:outline-none" @click="resetForm" type="button">
+                        <button class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 focus:outline-none" @click="resetForm">
                             Reset
                         </button>
                     </div>
@@ -85,26 +81,32 @@
                         <p class="text-gray-700 text-lg font-bold">Tổng tiền</p>
                         <p>{{ totalMoney | toCurrency }}</p>
                     </div>
-                    <div class="mb-4 flex items-center justify-between">
-                        <p class="text-gray-700 text-lg font-bold">Chia ra</p>
-                        <p>{{ totalMoney/7 | toCurrency }}</p>
+                    <div class="mb-4" v-for="(item, index) in persons" :key="index">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" :for="'person-'+item.id">
+                                {{ item.name }}
+                            </label>
+                            <p v-if="!item.model">{{ item.money | toCurrency }}</p>
+                            <p v-if="item.model">{{ item.newMoney | toCurrency }}</p>
+                        </div>
+                        <input v-model="item.model" @change="(e) => updateMoney(e, item)" class=" shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline " :id=" 'person-'+item.id " type="number ">
                     </div>
-                    <div class="flex items-center justify-between">
-                        <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" @click="prev">
+                    <div class="flex items-center justify-between ">
+                        <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline " type="button " @click="prev ">
                             Quay lại
                         </button>
-                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" @click="next">
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline " type="button " @click="next ">
                             Tiếp theo
                         </button>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
-    <script src="./js/vue.js"></script>
+    <script src="./js/vue.js "></script>
     <script src="https://unpkg.com/vuelidate@0.7.5/dist/vuelidate.min.js"></script>
     <script src="https://unpkg.com/vuelidate@0.7.5/dist/validators.min.js"></script>
-    <script src="./js/main.js"></script>
+    <script src="./js/main.js "></script>
 </body>
 
 </html>
